@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Night Owl Bar — Book</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+/* === Popup Modal Styles (Dark Theme) === */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: rgba(30,30,30,0.95);
+  padding: 28px 24px;
+  border-radius: 14px;
+  text-align: center;
+  max-width: 420px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 12px rgba(255,215,0,0.3);
+  animation: fadeIn 0.3s ease;
+  color: #f1f1f1;
+}
+.modal-content h2 {
+  margin-top: 0;
+  color: #f1c40f; /* golden */
+  font-size: 22px;
+}
+.modal-content p {
+  margin: 12px 0;
+  font-size: 16px;
+  color: #ccc;
+}
+.modal-content button {
+  margin-top: 18px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #e74c3c; /* Night Owl red */
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+}
+.modal-content button:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+@keyframes fadeIn {
+  from {opacity:0; transform: scale(0.9);}
+  to {opacity:1; transform: scale(1);}
+}
+
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img alt="Night Owl" src="assets/logo.png"/>
+      <span class="name">Night Owl Bar</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="specials.html">Specials</a>
+      <a href="book.html">Book</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn red" target="_blank" rel="noopener" href="https://line.me/R/ti/p/@nightowlbar">Reserve via LINE</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <img class="bg" alt="Book" src="assets/hero.jpg"/>
+    <div class="overlay"><div><h1 class="title">Reserve a Table</h1></div></div>
+  </section>
+
+  <section class="container section">
+    <div class="card">
+      <div class="body">
+        <form id="bookingForm">
+          <label for="bName">Full Name</label>
+          <input id="bName" name="name" required />
+
+          <label for="bPhone">Phone</label>
+          <input id="bPhone" name="phone" required />
+
+          <label for="bEmail">Email</label>
+          <input id="bEmail" name="email" type="email" required />
+
+          <label for="bDate">Date</label>
+          <input id="bDate" name="date" type="date" required />
+
+          <label for="bTime">Time</label>
+          <input id="bTime" name="time" type="time" required />
+
+          <label for="bParty">Party Size</label>
+          <input id="bParty" name="party" type="number" min="1" max="20" value="2" required />
+
+          <label for="bNote">Note</label>
+          <textarea id="bNote" name="note" placeholder="Allergy, occasion..."></textarea>
+
+          <div class="form-actions">
+            <button class="btn red" id="bookBtn" type="submit">Reserve</button>
+          </div>
+          <pre class="bodytext" id="bookMsg" style="white-space:pre-wrap"></pre>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ✅ Popup Modal -->
+<div class="modal" id="popupModal">
+  <div class="modal-content">
+    <h2>🎉 Reservation Received!</h2>
+    <p>Thank you for booking with Night Owl Bar.<br/>
+       We’ll confirm via LINE or phone shortly.</p>
+    <button onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById('bookingForm');
+const msg  = document.getElementById('bookMsg');
+const btn  = document.getElementById('bookBtn');
+const modal = document.getElementById('popupModal');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  msg.textContent = '';
+  btn.disabled = true;
+
+  try {
+    const fd = new FormData(form);
+    fd.append('action', 'create'); // bookings.php expects this
+
+    const res = await fetch('api/bookings.php', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Submit failed');
+
+    msg.textContent = 'Reservation received ✅ We will confirm via LINE or phone.';
+    form.reset();
+
+    // ✅ Show custom modal instead of alert
+    modal.style.display = "flex";
+
+  } catch (err) {
+    msg.textContent = 'Error: ' + err.message;
+    alert("⚠️ Error submitting reservation: " + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+function closeModal() {
+  modal.style.display = "none";
+}
+</script>
+
+<footer class="site-footer">
+  <div class="container foot-inner">
+    <span class="footer-brand"><img alt="logo" src="assets/logo.png"/></span>
+    <span>© Night Owl Bar · Sukhumvit Soi 11 · Open 17:00–02:00</span>
+  </div>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

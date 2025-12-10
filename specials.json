@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Gold Hour",
+    "note": "+5 pts cocktails 18:00–19:00",
+    "day": "Daily"
+  },
+  {
+    "id": 2,
+    "title": "Wine Wednesday",
+    "note": "12% off labels",
+    "day": "Wed"
+  },
+  {
+    "id": 3,
+    "title": "Champagne Friday",
+    "note": "Bottle deal all night",
+    "day": "Fri"
+  },
+  {
+    "id": 4,
+    "title": "Acoustic Night",
+    "note": "Live unplugged set · 21:00",
+    "day": "Sat"
+  }
+]

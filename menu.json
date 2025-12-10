@@ -1,0 +1,114 @@
+[
+  {
+    "id": 1,
+    "category": "Cocktails",
+    "name": "Negroni",
+    "desc": "Gin · Vermouth · Campari",
+    "price": "300฿"
+  },
+  {
+    "id": 2,
+    "category": "Cocktails",
+    "name": "Espresso Martini",
+    "desc": "Vodka · Espresso · Coffee Liqueur",
+    "price": "320฿"
+  },
+  {
+    "id": 3,
+    "category": "Cocktails",
+    "name": "Margarita",
+    "desc": "Tequila · Lime · Triple Sec",
+    "price": "300฿"
+  },
+  {
+    "id": 4,
+    "category": "Cocktails",
+    "name": "Old Fashioned",
+    "desc": "Bourbon · Bitters · Orange",
+    "price": "340฿"
+  },
+  {
+    "id": 5,
+    "category": "Cocktails",
+    "name": "Aperol Spritz",
+    "desc": "Aperol · Prosecco · Soda",
+    "price": "290฿"
+  },
+  {
+    "id": 6,
+    "category": "Cocktails",
+    "name": "Mojito",
+    "desc": "Rum · Lime · Mint · Soda",
+    "price": "280฿"
+  },
+  {
+    "id": 101,
+    "category": "Wines",
+    "name": "Chardonnay",
+    "desc": "Glass/Bottle",
+    "price": "280฿ / 1500฿"
+  },
+  {
+    "id": 102,
+    "category": "Wines",
+    "name": "Sauvignon Blanc",
+    "desc": "Glass/Bottle",
+    "price": "260฿ / 1500฿"
+  },
+  {
+    "id": 103,
+    "category": "Wines",
+    "name": "Merlot",
+    "desc": "Glass/Bottle",
+    "price": "280฿ / 1500฿"
+  },
+  {
+    "id": 104,
+    "category": "Wines",
+    "name": "Cabernet Sauvignon",
+    "desc": "Glass/Bottle",
+    "price": "300฿ / 1700฿"
+  },
+  {
+    "id": 105,
+    "category": "Wines",
+    "name": "Champagne (Brut)",
+    "desc": "Bottle",
+    "price": "2200฿"
+  },
+  {
+    "id": 201,
+    "category": "Snacks",
+    "name": "Truffle Fries",
+    "desc": "Parmesan · Truffle Oil",
+    "price": "180฿"
+  },
+  {
+    "id": 202,
+    "category": "Snacks",
+    "name": "Buffalo Wings",
+    "desc": "Classic Hot Sauce",
+    "price": "220฿"
+  },
+  {
+    "id": 203,
+    "category": "Snacks",
+    "name": "Mini Burgers",
+    "desc": "Cheese Sliders",
+    "price": "260฿"
+  },
+  {
+    "id": 204,
+    "category": "Snacks",
+    "name": "Calamari",
+    "desc": "Garlic Aioli",
+    "price": "240฿"
+  },
+  {
+    "id": 205,
+    "category": "Snacks",
+    "name": "Cheese Board",
+    "desc": "Selection of Cheeses",
+    "price": "320฿"
+  }
+]

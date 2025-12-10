@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1"/>
+<title>Night Owl Bar — Admin</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img alt="Night Owl" src="assets/logo.png"/>
+      <span class="name">Night Owl Bar</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="specials.html">Specials</a>
+      <a href="book.html">Book</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn red" target="_blank" rel="noopener" href="https://line.me/R/ti/p/@nightowlbar">Reserve via LINE</a>
+    </div>
+  </div>
+</header>
+
+<main class="admin container section">
+  <!-- Login card -->
+  <section class="login-wrap fade-in" id="adminLogin">
+    <article class="card login-card">
+      <div class="body">
+        <div style="text-align:center;margin-bottom:8px">
+          <img alt="logo" src="assets/logo.png" style="height:56px;border-radius:12px"/><br/>
+          <strong class="h2" style="display:block;margin-top:6px">Night Owl Admin</strong>
+        </div>
+        <form id="loginForm">
+          <label for="uName">Username</label>
+          <input id="uName" autocomplete="username"/>
+          <label for="uPass">Password</label>
+          <input id="uPass" type="password" autocomplete="current-password"/>
+          <div class="form-actions"><button class="btn red" type="submit">Login</button></div>
+          <p class="note" id="loginMsg" style="text-align:center"></p>
+        </form>
+      </div>
+    </article>
+  </section>
+
+  <!-- Admin app -->
+  <section id="adminApp" style="display:none">
+    <div class="logout-row"><button class="btn ghost" id="logoutBtn">Logout</button></div>
+    <div class="welcome">Welcome, Admin</div>
+
+    <!-- BOOKINGS (DB-connected) -->
+    <section class="card" style="margin:16px 0">
+      <div class="body">
+        <h2 class="h2">Bookings</h2>
+        <div class="toolbar">
+          <select class="small" id="bkFilter" onchange="renderBookings()">
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <table class="table" id="bkTable">
+          <thead>
+            <tr>
+              <th>Name</th><th>Phone</th><th>Email</th>
+              <th>Date</th><th>Time</th><th>Party</th>
+              <th>Note</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- If you have Menu / Specials / Members sections in this page, keep them below as you had. -->
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container foot-inner">
+    <span class="footer-brand"><img alt="logo" src="assets/logo.png"/></span>
+    <span>© Night Owl Bar · Sukhumvit Soi 11 · Open 17:00–02:00</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+// ===================
+// Simple session login
+// ===================
+(function(){
+  const USER="admin", PASS="nightowl2025", KEY="nob_admin_session";
+  const $ = (s)=>document.querySelector(s);
+
+  function isLoggedIn(){ try{return sessionStorage.getItem(KEY)==="1"}catch(e){return false} }
+  function setLoggedIn(v){ try{ v?sessionStorage.setItem(KEY,"1"):sessionStorage.removeItem(KEY) }catch(e){} }
+  function showApp(){
+    $('#adminLogin').style.display='none';
+    $('#adminApp').style.display='block';
+    renderBookings(); // initial load
+  }
+  function showLogin(){
+    $('#adminApp').style.display='none';
+    $('#adminLogin').style.display='flex';
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    if(isLoggedIn()) showApp();
+    $('#loginForm')?.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const u = $('#uName').value.trim();
+      const p = $('#uPass').value;
+      if(u===USER && p===PASS){ setLoggedIn(true); showApp(); }
+      else $('#loginMsg').textContent = "Invalid username or password.";
+    });
+    $('#logoutBtn')?.addEventListener('click', ()=>{ setLoggedIn(false); showLogin(); });
+  });
+})();
+
+// ============================
+// BOOKINGS — Database Connected
+// ============================
+async function renderBookings() {
+  const sel = document.getElementById('bkFilter');
+  const status = sel ? sel.value : 'All';
+  try {
+    const res = await fetch('api/bookings.php?status=' + encodeURIComponent(status));
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed to load');
+
+    const tbody = document.querySelector('#bkTable tbody');
+    tbody.innerHTML = data.rows.map(r => `
+      <tr>
+        <td>${escapeHtml(r.name)}</td>
+        <td>${escapeHtml(r.phone)}</td>
+        <td>${escapeHtml(r.email || '')}</td>
+        <td>${escapeHtml(r.date)}</td>
+        <td>${escapeHtml(r.time)}</td>
+        <td>${escapeHtml(String(r.party))}</td>
+        <td>${escapeHtml(r.note || '')}</td>
+        <td>${escapeHtml(r.status)}</td>
+        <td>
+          ${r.status === 'Pending'
+            ? `<button class="btn" onclick="confirmBooking(${Number(r.id)})">Confirm</button>`
+            : ''}
+          <button class="btn ghost" onclick="deleteBooking(${Number(r.id)})">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    alert('Error loading bookings: ' + err.message);
+  }
+}
+
+async function confirmBooking(id) {
+  const fd = new FormData();
+  fd.append('action', 'confirm');
+  fd.append('id', id);
+  try {
+    const res = await fetch('api/bookings.php', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Confirm failed');
+    renderBookings();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+async function deleteBooking(id) {
+  if (!confirm('Delete this booking?')) return;
+  const fd = new FormData();
+  fd.append('action', 'delete');
+  fd.append('id', id);
+  try {
+    const res = await fetch('api/bookings.php', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Delete failed');
+    renderBookings();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+
+// tiny XSS-safe escape for cell content
+function escapeHtml(s){
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'",'&#39;');
+}
+</script>
+</body>
+</html>
